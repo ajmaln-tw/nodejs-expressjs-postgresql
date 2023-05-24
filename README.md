@@ -1,6 +1,5 @@
-# Express - Postgres - TypeScript - Sequelize as ORM
-
-# * RUN PROJECT *
+# Express - Postgres - TypeScript - Sequelize 
+### * RUN PROJECT *
 npm i
 npm run start-dev
 
