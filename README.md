@@ -1,5 +1,5 @@
 # Express - Postgres - TypeScript - Sequelize 
 ### * RUN PROJECT *
-npm i
-npm run start-dev
+- [x] npm i
+- [x] npm run start-dev
 
