@@ -1,26 +1,26 @@
 import express, { Request, Response, ErrorRequestHandler } from 'express';
-import path from 'path';
 import apiRoutes from './routes/api';
-import dotenv from 'dotenv';
 import cors from 'cors';
+import logger from "morgan";
+import { config } from "./config/config";
 
-dotenv.config();
 
 const server = express();
 
-server.use(cors());
 
-server.use(express.static(path.join(__dirname, '../public')));
+server.use(cors());
+server.use(logger("dev"));
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json())
 
+// Health Check
 server.get('/ping', (req: Request, res: Response) => res.json({ pong: true }));
 
-server.use(apiRoutes);
+server.use("/v1/", apiRoutes);
 
 server.use((req: Request, res: Response) => {
     res.status(404);
-    res.json({ error: 'Endpoint not found.' });
+    res.json({ error: 'Requested Endpoint not found.' });
 });
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
@@ -30,4 +30,6 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 }
 server.use(errorHandler);
 
-server.listen(process.env.PORT);
+server.listen(config.server.port, () => {
+    console.log("server running on " + config.server.port)
+});

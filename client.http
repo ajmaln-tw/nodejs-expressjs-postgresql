@@ -1,0 +1,6 @@
+post http://localhost:8001/v1/auth/signIn
+Content-Type:  application/json
+
+{
+   
+}
