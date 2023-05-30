@@ -1,5 +1,6 @@
+import compression from "compression";
 import dotenv from "dotenv";
-
+import express, { Request, Response, ErrorRequestHandler } from 'express';
 dotenv.config();
 
 const SERVER_PORT = process.env.SERVER_PORT || 0;
@@ -18,5 +19,15 @@ export const config = {
     },
     tokens: {
         jwt_token: process.env.JWT_SECRET
+    },
+    compressionConfig: {
+        level: 9,
+        threshold: 100 * 1000,
+        filter: (req: Request, res: Response) => {
+            if (req.headers["x-no-compression"]) {
+                return false
+            }
+            return compression.filter(req, res)
+        }
     }
 };

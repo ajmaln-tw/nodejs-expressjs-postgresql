@@ -1,11 +1,12 @@
 
 /* eslint-disable indent */
 import jwt from "jsonwebtoken";
-import { Users } from "../models/Users";
+import { User } from "../models/Users";
 import { ERROR_MSG } from "../config/messages";
 import { ERROR_CODE } from "../config/constants";
 import { Request, Response, ErrorRequestHandler, NextFunction } from 'express';
 import { config } from "../config/config";
+import _ from "lodash";
 
 // TODO :- check JWT_SECRET
 // TODO :- bearer token
@@ -21,14 +22,14 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
         token = token.split(" ")[1];
         const decodedToken: any = jwt.verify(token, config.tokens.jwt_token as string);
         const { userId = "" } = decodedToken;
-        const user = await Users.findByPk(userId);
+        const user = await User.findByPk(userId);
         if (!user) {
             return res.status(404).json(ERROR_MSG.USER_NOT);
         }
         if (!user.status) {
             return res.status(401).json({ message: "User blocked from accessing resources" });
         }
-        req.user = user;
+        _.set(req, "user", user)
         next();
     } catch (error) {
         res.status(401).json({ message: (error as Error).message });

@@ -9,7 +9,7 @@ export interface UserInstance extends Model {
     status: boolean;
 }
 
-export const Users = sequelize.define<UserInstance>(
+export const User = sequelize.define<UserInstance>(
     "Users",
     {
         id: {
@@ -32,7 +32,7 @@ export const Users = sequelize.define<UserInstance>(
         },
     },
     {
-        tableName: "users",
+        tableName: "Users",
         timestamps: true,
     }
 );

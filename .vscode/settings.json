@@ -1,7 +1,10 @@
 {
     "workbench.colorTheme": "Visual Studio Dark",
     "cSpell.words": [
-        "camelcase"
+        "Ajmal",
+        "camelcase",
+        "Kenx",
+        "Nasumdeen"
     ],
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true

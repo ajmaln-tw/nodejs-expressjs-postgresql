@@ -1,11 +1,15 @@
-CREATE TABLE todo (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
-    data VARCHAR(516) NOT NULL,
-    done VARCHAR(1) NOT NULL);
+CREATE TABLE Users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(50),
+  password VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  age INT,
+ status BOOLEAN DEFAULT true
+);
 
-INSERT INTO todo (title,data) VALUES 
-('todo title','It is a long established fact that a reader will be distracted by the readable content
-of a page when looking at its layout. The point of using Lorem Ipsum is that it has a
-more-or-less normal distribution of letters, as opposed to using "Content here, content"
-here, making it look like readable English.');
+INSERT INTO Users(name, email, password, age)
+VALUES ('John Doe', 'john.doe@example.com', "123", 25),
+       ('Jane Smith', 'jane.smith@example.com', "123", 30),
+      ('Ajmal Nasumdeen', 'ajmal.n@test.com', "123", 20),
+       ('Mike Johnson', 'mike.johnson@example.com', "123", 35);
