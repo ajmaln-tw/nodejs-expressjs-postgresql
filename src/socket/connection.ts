@@ -14,6 +14,7 @@ function initializeSocket(server: any): void {
         }
     })
 
+
     io.on('connection', (socket) => {
         console.log('A client has connected.', socket.id);
         // Add your Socket.IO event handlers and logic here
