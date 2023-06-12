@@ -15,5 +15,8 @@ Content-Type:  application/json
 ###
 
 get http://localhost:8001/api/auth/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiYWptYWwubkB0ZXN0LmNvbSIsImlhdCI6MTY4NTQzMDAxMywiZXhwIjoxNjg1NDM3MjEzfQ.TlvEM0JlzQiWvWcHDSknRcjkHaxUU0nmIrihola7YGM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJham1hbC5uQHRlc3QuY29tIiwiaWF0IjoxNjg2MDU3NTA4LCJleHAiOjE2ODYwNjQ3MDh9.3eevApAo5NZpCd9f2l0x5rGEyAypVgYABDKmhz8dJuI
+
+####
+get http://localhost:8001/api/no-auth/ping
 

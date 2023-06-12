@@ -7,21 +7,29 @@ import { config } from "./config/config";
 import { verifyToken } from './utils/middleWare';
 import compression from "compression";
 import responseTime from "response-time";
-//todo Kenx, objection
+import rateLimiter from "rate-limiter-flexible";
+import http from "http";
+import socketIO from "socket.io";
+import helmet from "helmet";
+import initializeSocket from './socket/connection';
+// todo Kenx, objection
 // initial setup DB
 
 const server = express();
+const socServer = http.createServer(server)
+initializeSocket(socServer);
 
-
-server.use(cors());
-server.use(compression(config.compressionConfig))
+server.use(helmet());
+server.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"] }));
+server.use(compression(config.compressionConfig));
+// server.use(rateLimiterMiddleware);
 server.use(responseTime())
 server.use(logger("dev"));
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json())
 
 // Health Check
-server.get('/ping', (req: Request, res: Response) => res.json({ pong: true }));
+server.get("/api/no-auth/ping", (req: Request, res: Response) => res.json({ pong: true }));
 
 server.use("/api/no-auth", authApi);
 server.use("/api/auth", verifyToken, apiResourceRoutes);
@@ -38,6 +46,9 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 }
 server.use(errorHandler);
 
-server.listen(config.server.port, () => {
+socServer.listen(config.server.port, () => {
     console.log("server running on " + config.server.port)
 });
+// socServer.listen(8000, () => {
+//     console.log("Socket Running on " + 8000)
+// })

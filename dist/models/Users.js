@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Users = void 0;
+exports.User = void 0;
 const pg_1 = require("../instances/pg");
 const sequelize_1 = require("sequelize");
-exports.Users = pg_1.sequelize.define("Users", {
+exports.User = pg_1.sequelize.define("Users", {
     id: {
         primaryKey: true,
         autoIncrement: true,
@@ -23,6 +23,6 @@ exports.Users = pg_1.sequelize.define("Users", {
         defaultValue: true,
     },
 }, {
-    tableName: "users",
+    tableName: "Users",
     timestamps: true,
 });

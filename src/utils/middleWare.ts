@@ -1,12 +1,16 @@
 
 /* eslint-disable indent */
+import { Express } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/Users";
 import { ERROR_MSG } from "../config/messages";
 import { ERROR_CODE } from "../config/constants";
-import { Request, Response, ErrorRequestHandler, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { config } from "../config/config";
 import _ from "lodash";
+import * as redis from 'redis';
+import { RateLimiterRedis } from 'rate-limiter-flexible';
+import { ClientCommandOptions } from "@redis/client/dist/lib/client";
 
 // TODO :- check JWT_SECRET
 // TODO :- bearer token
@@ -16,23 +20,55 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
         if (!token) {
             return res.status(401).json({ message: "Token Required for accessing this resource", errorCode: ERROR_CODE.TOKEN_REQUIRED });
         }
-        if (!token.length) {
-            return res.status(403).json({ message: "Invalid token", errorCode: ERROR_CODE.INVALID_TOKEN });
-        }
         token = token.split(" ")[1];
+        if (token && !token.length) {
+            return res.status(403).json({ message: "Invalid token", errorCode: ERROR_CODE.TOKEN_REQUIRED });
+        }
         const decodedToken: any = jwt.verify(token, config.tokens.jwt_token as string);
-        const { userId = "" } = decodedToken;
-        const user = await User.findByPk(userId);
+        const { id = "" } = decodedToken;
+        const user = await User.findByPk(id);
         if (!user) {
             return res.status(404).json(ERROR_MSG.USER_NOT);
         }
         if (!user.status) {
             return res.status(401).json({ message: "User blocked from accessing resources" });
         }
-        _.set(req, "user", user)
+        _.set(req, "user", user.id)
         next();
     } catch (error) {
-        res.status(401).json({ message: (error as Error).message });
+        res.status(401).json({ message: (error as Error).message, errorCode: ERROR_CODE.INVALID_TOKEN });
     }
+};
+
+
+
+
+const redisClient = redis.createClient({
+    url: "redis://default:IO8YoR0X6h58gswRFQm0@containers-us-west-124.railway.app:7414"
+});
+
+const rateLimiter = new RateLimiterRedis({
+    storeClient: redisClient,
+    keyPrefix: "middleware",
+    points: 10, // 10 requests
+    duration: 1, // per 1 second by IP
+});
+
+
+
+
+export const rateLimiterMiddleware = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void => {
+    rateLimiter
+        .consume(req.ip)
+        .then(() => {
+            next();
+        })
+        .catch(() => {
+            res.status(429).json({ message: "Too Many Requests" });
+        });
 };
 

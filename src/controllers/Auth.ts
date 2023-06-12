@@ -8,14 +8,14 @@ import _ from "lodash";
 
 
 export const signIn = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email = "", password = "" } = req.body;
     try {
         const user = await User.findOne({ where: { email } });
-        if (!user) return res.status(404).json({ message: "Invalid Credential" });
+        if (!user) return res.status(401).json({ message: "Invalid Credential" });
         const id = user.id;
         const isPassword = await bcrypt.compare(password, user.password);
-        if (!isPassword) return res.status(403).json({ messages: "Invalid Credential" });
-        const token = jwt.sign({ userId: id, email }, config.tokens.jwt_token as string, { expiresIn: "2h" });
+        if (!isPassword) return res.status(401).json({ messages: "Invalid Credential" });
+        const token = jwt.sign({ id, email }, config.tokens.jwt_token as string, { expiresIn: "2h" });
         res.status(200).json({ token });
     } catch (error) {
         console.log("Error", error)
