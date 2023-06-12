@@ -49,6 +49,3 @@ server.use(errorHandler);
 socServer.listen(config.server.port, () => {
     console.log("server running on " + config.server.port)
 });
-// socServer.listen(8000, () => {
-//     console.log("Socket Running on " + 8000)
-// })

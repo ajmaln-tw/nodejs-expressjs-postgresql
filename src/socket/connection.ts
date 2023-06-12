@@ -20,7 +20,7 @@ function initializeSocket(server: any): void {
         // Add your Socket.IO event handlers and logic here
         socket.on('send_message', (message) => {
             console.log('Received chat message:', message);
-            io.emit('chat message', message); // Broadcast the message to all connected clients
+            io.emit('chat message', message);
         });
         let sog = rpm / sogValue;
         setInterval(() => {
@@ -36,6 +36,12 @@ function initializeSocket(server: any): void {
 
     io.on("connect_error", (err) => {
         console.log(`connect_error due to ${err.message}`);
+    });
+
+    io.on('disconnect', function (socket) {
+        console.log('A client has disconnected.', socket.id);
+        io.emit('disconnected');
+
     });
 }
 
