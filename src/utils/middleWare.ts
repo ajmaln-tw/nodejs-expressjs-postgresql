@@ -72,3 +72,19 @@ export const rateLimiterMiddleware = (
         });
 };
 
+
+export const verifyTokenSocket = (socket: any, next: NextFunction) => {
+    const token = socket.handshake.auth?.token;
+    console.log("ajmal token", token)
+    try {
+        if (!token) throw new Error("Invalid Token");
+        const decodedToken = jwt.verify(token, config.tokens.jwt_token as string)
+        console.log("ajmal decodedToken", decodedToken)
+        socket.user = decodedToken;
+    } catch (error) {
+        console.log("ajmal error", error)
+        const socketError = new Error("UN_AUTHORIZED")
+        return next(socketError);
+    }
+    next()
+}
