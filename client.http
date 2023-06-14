@@ -18,5 +18,7 @@ get http://localhost:8001/api/auth/users
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJham1hbC5uQHRlc3QuY29tIiwiaWF0IjoxNjg2MDU3NTA4LCJleHAiOjE2ODYwNjQ3MDh9.3eevApAo5NZpCd9f2l0x5rGEyAypVgYABDKmhz8dJuI
 
 ####
-get http://localhost:8001/api/no-auth/ping
+get http://localhost:8001/api/auth/users?pageIndex=1&pageSize=5&totalCount=dsdf
+Authorization: Bearer .eyJpZCI6MSwiZW1haWwiOiJham1hbC5uQHRlc3QuY29tIiwiaWF0IjoxNjg2NzM1MzYxLCJleHAiOjE2ODY4MjE3NjF9.dk1OM3FiMw6LmtwNOIkBMUmBvEqQ744fZz5Vsa_KInw
+
 

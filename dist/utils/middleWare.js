@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rateLimiterMiddleware = exports.verifyToken = void 0;
+exports.verifyTokenSocket = exports.rateLimiterMiddleware = exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Users_1 = require("../models/Users");
 const messages_1 = require("../config/messages");
@@ -93,3 +93,22 @@ const rateLimiterMiddleware = (req, res, next) => {
     });
 };
 exports.rateLimiterMiddleware = rateLimiterMiddleware;
+const verifyTokenSocket = (socket, next) => {
+    var _a;
+    const token = (_a = socket.handshake.auth) === null || _a === void 0 ? void 0 : _a.token;
+    console.log("ajmal token", token);
+    try {
+        if (!token)
+            throw new Error("Invalid Token");
+        const decodedToken = jsonwebtoken_1.default.verify(token, config_1.config.tokens.jwt_token);
+        console.log("ajmal decodedToken", decodedToken);
+        socket.user = decodedToken;
+    }
+    catch (error) {
+        console.log("ajmal error", error);
+        const socketError = new Error("UN_AUTHORIZED");
+        return next(socketError);
+    }
+    next();
+};
+exports.verifyTokenSocket = verifyTokenSocket;

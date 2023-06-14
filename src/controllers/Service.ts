@@ -9,6 +9,7 @@ import { CustomRequest } from "../common/interface";
 import fs from "fs/promises"
 import path from "path";
 
+
 export const customers = async (req: Request, res: Response) => {
     try {
         const user = await Customer.findAll();
@@ -34,12 +35,22 @@ export const customerById = async (req: Request, res: Response) => {
 
 export const users = async (req: Request, res: Response) => {
     try {
-        const user = await User.findAll();
-        if (!user) return res.status(404).json({ message: "No Records Found" });
-        const filePath = path.join(__dirname, 'dummy.json');
-        const fileContents = await fs.readFile(filePath, 'utf8');
-        const jsonData = JSON.parse(fileContents);
-        res.status(200).json(jsonData);
+        const { pageSize, pageIndex, totalCount } = req.query;
+        const limit = parseInt(pageSize as string) || 10;
+        const offset = parseInt(pageIndex as string) * limit;
+
+        const users = await User.findAndCountAll({
+            limit,
+            offset,
+        });
+        const totalPages = Math.ceil(users.count / limit);
+        res.status(200).json({
+            data: users.rows,
+            pageIndex: parseInt(pageIndex as string),
+            pageSize: limit,
+            totalCount: users.count,
+            totalPages,
+        });
         // res.status(200).json({ data: user });
     } catch (error) {
         console.log("Error", error)
@@ -53,7 +64,6 @@ export const getProfile = async (req: Request, res: Response) => {
         const result = await User.findByPk(id, { raw: true });
         if (!result) return res.status(404).json({ message: "User Profile not found" });
         const data = _.omit(result, ["createdAt", "password", "updatedAt", "status"])
-        console.log(data)
         res.status(200).json(data);
     } catch (error) {
         console.log("Error", error)
@@ -61,3 +71,29 @@ export const getProfile = async (req: Request, res: Response) => {
     }
 };
 
+
+export const userById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const result = User.findByPk(id, { raw: true })
+        if (!result) return res.status(404).json({ message: "User Profile not found" });
+        const data = _.omit(result, ["createdAt", "password", "updatedAt", "status"])
+        res.status(200).json(data)
+    } catch (error) {
+        console.log("Error", error)
+        res.status(500).json({ errorTitle: "Error", message: 'Internal server error' });
+    }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const { id, ...updateData } = req.body;
+        const user: any = await User.findByPk(id);
+        Object.assign(user, updateData);
+        await user.save();
+        res.status(200).json(user);
+    } catch (error) {
+        console.log("Error", error)
+        res.status(500).json({ errorTitle: "Error", message: 'Internal server error' });
+    }
+};

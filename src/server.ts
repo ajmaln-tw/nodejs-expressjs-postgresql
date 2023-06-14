@@ -36,13 +36,13 @@ server.use("/api/auth", verifyToken, apiResourceRoutes);
 
 server.use((req: Request, res: Response) => {
     res.status(404);
-    res.json({ error: 'Requested Endpoint not found.' });
+    res.json({ message: 'Requested Resource not found.' });
 });
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     res.status(400); // Bad Request
     console.log(err);
-    res.json({ error: 'An error has occurred.' });
+    res.json({ errorTitle: "Bad Request", message: err.message || 'An error has occurred.' });
 }
 server.use(errorHandler);
 

@@ -82,9 +82,15 @@ export const verifyTokenSocket = (socket: any, next: NextFunction) => {
         console.log("ajmal decodedToken", decodedToken)
         socket.user = decodedToken;
     } catch (error) {
+        socket.disconnect(true);
         console.log("ajmal error", error)
         const socketError = new Error("UN_AUTHORIZED")
-        return next(socketError);
+        return socketError;
     }
     next()
+}
+
+interface PaginationOptions {
+    defaultPageSize?: number;
+    maxPageSize?: number;
 }

@@ -15,7 +15,7 @@ export const signIn = async (req: Request, res: Response) => {
         const id = user.id;
         const isPassword = await bcrypt.compare(password, user.password);
         if (!isPassword) return res.status(401).json({ messages: "Invalid Credential" });
-        const token = jwt.sign({ id, email }, config.tokens.jwt_token as string, { expiresIn: "2h" });
+        const token = jwt.sign({ id, email }, config.tokens.jwt_token as string, { expiresIn: "1d" });
         res.status(200).json({ token });
     } catch (error) {
         console.log("Error", error)
@@ -35,7 +35,7 @@ export const signUp = async (req: Request, res: Response) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await User.create({ ...profileDetails, password: hashedPassword });
         if (!result) return res.status(400).json({ message: "PROFILE_NOT" });
-        const token = jwt.sign({ userId: result.id, email }, config.tokens.jwt_token as string, { expiresIn: "2h" });
+        const token = jwt.sign({ userId: result.id, email }, config.tokens.jwt_token as string, { expiresIn: "1d" });
         res.status(201).json({ token });
     } catch (error) {
         console.log("Error", error)
