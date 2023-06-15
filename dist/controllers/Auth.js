@@ -28,7 +28,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const isPassword = yield bcrypt_1.default.compare(password, user.password);
         if (!isPassword)
             return res.status(401).json({ messages: "Invalid Credential" });
-        const token = jsonwebtoken_1.default.sign({ id, email }, config_1.config.tokens.jwt_token, { expiresIn: "2h" });
+        const token = jsonwebtoken_1.default.sign({ id, email }, config_1.config.tokens.jwt_token, { expiresIn: "1d" });
         res.status(200).json({ token });
     }
     catch (error) {
@@ -51,7 +51,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield Users_1.User.create(Object.assign(Object.assign({}, profileDetails), { password: hashedPassword }));
         if (!result)
             return res.status(400).json({ message: "PROFILE_NOT" });
-        const token = jsonwebtoken_1.default.sign({ userId: result.id, email }, config_1.config.tokens.jwt_token, { expiresIn: "2h" });
+        const token = jsonwebtoken_1.default.sign({ userId: result.id, email }, config_1.config.tokens.jwt_token, { expiresIn: "1d" });
         res.status(201).json({ token });
     }
     catch (error) {

@@ -40,6 +40,7 @@ export const users = async (req: Request, res: Response) => {
         const offset = parseInt(pageIndex as string) * limit;
 
         const users = await User.findAndCountAll({
+            attributes: ['id', 'name', 'email', 'status'],
             limit,
             offset,
         });
@@ -51,7 +52,6 @@ export const users = async (req: Request, res: Response) => {
             totalCount: users.count,
             totalPages,
         });
-        // res.status(200).json({ data: user });
     } catch (error) {
         console.log("Error", error)
         res.status(500).json({ errorTitle: "Error", message: 'Internal server error' });

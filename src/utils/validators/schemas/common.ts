@@ -7,13 +7,11 @@ export const getByIdParamsSchema = Joi.object({
 
 export const paginationSchema = Joi.object({
     pageIndex: Joi.number().integer().min(0).required().messages({
-        "any.required": `pageIndex${schemaMessages.required}`
+        "string.min": schemaMessages.passwordAtLeast3,
+        "string.max": schemaMessages.passwordNotGT30,
+        "any.required": schemaMessages.passwordRequired
     }),
-    pageSize: Joi.number().integer().min(1).required().messages({
-        "any.required": `pageSize${schemaMessages.required}`
-    }),
-    totalCount: Joi.number().integer().min(0).required().messages({
-        "any.required": `totalCount${schemaMessages.required}`
-    }),
+    pageSize: Joi.number().integer().min(1).required(),
+    totalCount: Joi.number().integer().min(0).required(),
 });
 

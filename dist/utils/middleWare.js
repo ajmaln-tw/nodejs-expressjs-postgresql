@@ -105,9 +105,10 @@ const verifyTokenSocket = (socket, next) => {
         socket.user = decodedToken;
     }
     catch (error) {
+        socket.disconnect(true);
         console.log("ajmal error", error);
         const socketError = new Error("UN_AUTHORIZED");
-        return next(socketError);
+        return socketError;
     }
     next();
 };

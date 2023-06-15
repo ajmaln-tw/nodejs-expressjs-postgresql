@@ -25,9 +25,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const controller = __importStar(require("../controllers/Service"));
+const UserValidator_1 = require("../utils/validators/UserValidator");
 const router = (0, express_1.Router)();
 router.get("/customers", controller.customers);
 router.get("/customer/:id", controller.customerById);
 router.get("/profile", controller.getProfile);
-router.get("/users", controller.users);
+router.get("/users", UserValidator_1.paginationValidator, controller.users);
+router.get("/users/:id", UserValidator_1.getByIdValidator, controller.userById);
+router.put("/users/:id", UserValidator_1.validateUserDetails, controller.updateUser);
 exports.default = router;

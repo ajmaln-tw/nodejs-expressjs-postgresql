@@ -4,6 +4,7 @@ const socket_io_1 = require("socket.io");
 const middleWare_1 = require("../utils/middleWare");
 const newSocketHandler_1 = require("./socketHandler/newSocketHandler");
 const disconnectHandler_1 = require("./socketHandler/disconnectHandler");
+const serverStore_1 = require("./serverStore");
 function initializeSocket(server) {
     const io = new socket_io_1.Server(server, {
         cors: {
@@ -11,12 +12,14 @@ function initializeSocket(server) {
             methods: ["GET", "POST"]
         }
     });
+    (0, serverStore_1.setSocketServerInstance)(io);
     io.use((socket, next) => (0, middleWare_1.verifyTokenSocket)(socket, next));
     io.on('connection', (socket) => {
         console.log('A client has connected.', socket.id);
         (0, newSocketHandler_1.newConnectionHandler)(socket, io);
         handleSocketEvents(socket, io);
         appNotifications(socket);
+        emitOnlineUsers(socket);
         let intervalId = setInterval(() => {
             emitPushNotification(socket);
         }, 12000);
@@ -56,5 +59,10 @@ function emitPushNotification(socket) {
         RPM: rpm + 6000,
         sog: sog
     });
+}
+function emitOnlineUsers(socket) {
+    console.log("live_users ++ event");
+    const onlineUsers = (0, serverStore_1.getActiveConnections)(socket.user.id);
+    socket.emit("live_users", [...onlineUsers]);
 }
 exports.default = initializeSocket;

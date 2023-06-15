@@ -1,6 +1,6 @@
 import { NextFunction } from "express";
 import createHttpError from "http-errors";
-import { Schema, ValidationError } from "joi";
+import { Schema } from "joi";
 
 
 export const validator = async (schemaName: any, body: any, next: NextFunction) => {
@@ -16,16 +16,14 @@ export const validator = async (schemaName: any, body: any, next: NextFunction) 
 };
 
 export const queryValidator = async (schemaName: Schema, params: any, next: NextFunction) => {
-
+    const value = await schemaName.validate(params);
     try {
-        const value = await schemaName.validateAsync(params);
+        value.error
+            ? next(createHttpError(400, value.error.details[0].message))
+            : next();
     } catch (error) {
-        if (error instanceof ValidationError) {
-            const errorMessage: string = error.details[0].message;
-            next(createHttpError(422, errorMessage));
-        } else {
-            console.log("here", error);
-            next(createHttpError(500, 'Internal server error'));
-        }
+        // eslint-disable-next-line no-console
+        console.log("here", error)
+        console.log(error);
     }
 };

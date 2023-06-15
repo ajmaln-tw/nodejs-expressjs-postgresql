@@ -12,6 +12,7 @@ exports.SUCCESS_MESSAGE = {
     UPDATED: "Updated Successfully"
 };
 exports.schemaMessages = {
+    required: " Required",
     nameRequired: "Name Required",
     passwordAtLeast3: "Password must be at least 3 characters",
     passwordNotGT30: "Password cannot exceed 30 characters",

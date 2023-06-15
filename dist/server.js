@@ -34,12 +34,12 @@ server.use("/api/no-auth", authApi_1.default);
 server.use("/api/auth", middleWare_1.verifyToken, apiResourceRoutes_1.default);
 server.use((req, res) => {
     res.status(404);
-    res.json({ error: 'Requested Endpoint not found.' });
+    res.json({ message: 'Requested Resource not found.' });
 });
 const errorHandler = (err, req, res, next) => {
     res.status(400); // Bad Request
     console.log(err);
-    res.json({ error: 'An error has occurred.' });
+    res.json({ errorTitle: "Bad Request", message: err.message || 'An error has occurred.' });
 };
 server.use(errorHandler);
 socServer.listen(config_1.config.server.port, () => {
