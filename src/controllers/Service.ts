@@ -76,15 +76,15 @@ export const createCustomer = async (req: Request, res: Response) => {
 export const updateCustomer = async (req: Request, res: Response) => {
     const { name, addresses = [] } = req.body;
     const { id: customerId } = req.params;
-    const userId = _.get(req, "user");
     try {
         if (addresses.length > 9) return res.status(400).json({ message: "Address Entries limit exceeded" })
-        const user: UserInstance | any = await User.findByPk(userId);
+        const customer = await Customer.findOne({ where: { id: customerId } });
+        const user = await User.findByPk(customer?.userId, { raw: true });
+        console.log("user", user);
         if (!user) {
             return res.status(404).json({ message: "Customer not found" });
         }
-        user.name = name;
-        await user.save();
+        await User.update({ name }, { where: { id: user.id } });
 
         //if address already exists save to db
         //not exists, save to data to db
@@ -128,10 +128,9 @@ export const updateCustomer = async (req: Request, res: Response) => {
 
 export const customerById = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = _.get(req, "user");
     try {
         const customer = await Customer.findOne({ where: { id: id } });
-        const user = await User.findByPk(userId, { raw: true });
+        const user = await User.findByPk(customer?.userId, { raw: true });
         const addresses = await Address.findAll({
             attributes: ['id', 'address', 'postalCode', 'city', 'country'],
             where: { customerId: customer?.id }, raw: true

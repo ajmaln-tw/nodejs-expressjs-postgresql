@@ -3,6 +3,7 @@ import { Router } from "express";
 import * as controller from "../controllers/Service";
 import * as profileController from "../controllers/Profile";
 import { getByIdValidator, paginationValidator, validateUserDetails } from "../utils/validators/UserValidator";
+import { validateCustomerDetails } from "../utils/validators/CustomerValidator";
 
 
 const router = Router();
@@ -13,7 +14,7 @@ router.put("/update-customerDetails", controller.createCustomer);
 router.patch("/update-customerDetails/:customerId", controller.updateCustomer);
 router.get("/customers", paginationValidator, controller.customers);
 router.get("/customers/:id", controller.customerById);
-router.put("/customers/:id", controller.updateCustomer);
+router.put("/customers/:id", validateCustomerDetails, controller.updateCustomer);
 
 router.get("/users", paginationValidator, controller.users);
 router.get("/users/:id", getByIdValidator, controller.userById);
