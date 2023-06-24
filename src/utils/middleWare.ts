@@ -2,7 +2,7 @@
 /* eslint-disable indent */
 import { Express } from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../models/Users";
+import { User } from "../models/User";
 import { ERROR_MSG } from "../config/messages";
 import { ERROR_CODE } from "../config/constants";
 import { Request, Response, NextFunction } from 'express';
@@ -11,6 +11,7 @@ import _ from "lodash";
 import * as redis from 'redis';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 import { ClientCommandOptions } from "@redis/client/dist/lib/client";
+import createHttpError from "http-errors";
 
 // TODO :- check JWT_SECRET
 // TODO :- bearer token
@@ -31,7 +32,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
             return res.status(404).json(ERROR_MSG.USER_NOT);
         }
         if (!user.status) {
-            return res.status(401).json({ message: "User blocked from accessing resources" });
+            return res.status(401).json({ message: "User blocked from accessing all resources" });
         }
         _.set(req, "user", user.id)
         next();
@@ -77,7 +78,7 @@ export const verifyTokenSocket = (socket: any, next: NextFunction) => {
     const token = socket.handshake.auth?.token;
     console.log("ajmal token", token)
     try {
-        if (!token) throw new Error("Invalid Token");
+        if (!token) createHttpError(401, "Invalid Token");
         const decodedToken = jwt.verify(token, config.tokens.jwt_token as string)
         console.log("ajmal decodedToken", decodedToken)
         socket.user = decodedToken;

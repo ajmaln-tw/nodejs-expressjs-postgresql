@@ -11,8 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.disconnectHandler = void 0;
 const serverStore_1 = require("../serverStore");
-const disconnectHandler = (socket) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("params 1", socket.id);
+const disconnectHandler = (socket, io) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("disconnectHandler", socket.id);
     (0, serverStore_1.removeConnectedUser)(socket.id);
+    const activeConnections = (0, serverStore_1.getActiveConnections)(socket.user.id);
+    io.to('online_users').emit('new_user', activeConnections);
 });
 exports.disconnectHandler = disconnectHandler;

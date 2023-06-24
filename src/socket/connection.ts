@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { verifyTokenSocket } from '../utils/middleWare';
 import { newConnectionHandler } from './socketHandler/newSocketHandler';
 import { disconnectHandler } from './socketHandler/disconnectHandler';
+import { getActiveConnections } from './serverStore';
 
 
 function initializeSocket(server: any): void {
@@ -19,13 +20,14 @@ function initializeSocket(server: any): void {
         handleSocketEvents(socket, io);
         appNotifications(socket);
 
-        let intervalId = setInterval(() => {
-            emitPushNotification(socket);
-        }, 12000);
+        // let intervalId = setInterval(() => {
+        //     emitPushNotification(socket);
+        // }, 2000);
 
         socket.on('disconnect', () => {
-            disconnectHandler(socket);
-            clearInterval(intervalId);
+            disconnectHandler(socket, io);
+            // clearInterval(intervalId);
+
 
         });
     });
@@ -49,6 +51,8 @@ function appNotifications(socket: any): void {
         message: "Successfully Connected to server"
     });
 }
+
+
 let i = 0;
 function emitPushNotification(socket: any): void {
     const baseTaskID = Math.round((Date.now() - 1511098000000) / 1000);

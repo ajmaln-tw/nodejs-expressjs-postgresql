@@ -9,8 +9,8 @@ export const getSocketServerInstance = () => {
     return io;
 };
 
-export const addNewConnectedUser = ({ socketId, userId }: { socketId: string; userId: number }): void => {
-    connectedUser.set(socketId, { userId });
+export const addNewConnectedUser = ({ socketId, user }: { socketId: string; user: object }): void => {
+    connectedUser.set(socketId, user);
 };
 
 export const removeConnectedUser = (socketId: string): void => {
@@ -22,8 +22,8 @@ export const removeConnectedUser = (socketId: string): void => {
 export const getActiveConnections = (userId: any) => {
     const activeConnections: any = [];
     connectedUser.forEach((key, value: any) => {
-        if (value.userId === userId) {
-            activeConnections.push(key)
+        if (value.id !== userId) {
+            activeConnections.push({ socketId: value, ...key })
         }
     })
     return activeConnections;

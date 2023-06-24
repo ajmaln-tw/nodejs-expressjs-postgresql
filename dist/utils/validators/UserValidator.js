@@ -9,7 +9,7 @@ const paginationValidator = (req, res, next) => {
 };
 exports.paginationValidator = paginationValidator;
 const getByIdValidator = (req, res, next) => {
-    (0, validator_1.queryValidator)(common_1.getByIdParamsSchema, req.query, next);
+    (0, validator_1.queryValidator)(common_1.getByIdParamsSchema, req.params, next);
 };
 exports.getByIdValidator = getByIdValidator;
 const validateUserDetails = (req, res, next) => {

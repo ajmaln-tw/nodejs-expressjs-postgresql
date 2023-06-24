@@ -37,13 +37,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyTokenSocket = exports.rateLimiterMiddleware = exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const Users_1 = require("../models/Users");
+const User_1 = require("../models/User");
 const messages_1 = require("../config/messages");
 const constants_1 = require("../config/constants");
 const config_1 = require("../config/config");
 const lodash_1 = __importDefault(require("lodash"));
 const redis = __importStar(require("redis"));
 const rate_limiter_flexible_1 = require("rate-limiter-flexible");
+const http_errors_1 = __importDefault(require("http-errors"));
 // TODO :- check JWT_SECRET
 // TODO :- bearer token
 const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -58,12 +59,12 @@ const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         }
         const decodedToken = jsonwebtoken_1.default.verify(token, config_1.config.tokens.jwt_token);
         const { id = "" } = decodedToken;
-        const user = yield Users_1.User.findByPk(id);
+        const user = yield User_1.User.findByPk(id);
         if (!user) {
             return res.status(404).json(messages_1.ERROR_MSG.USER_NOT);
         }
         if (!user.status) {
-            return res.status(401).json({ message: "User blocked from accessing resources" });
+            return res.status(401).json({ message: "User blocked from accessing all resources" });
         }
         lodash_1.default.set(req, "user", user.id);
         next();
@@ -99,7 +100,7 @@ const verifyTokenSocket = (socket, next) => {
     console.log("ajmal token", token);
     try {
         if (!token)
-            throw new Error("Invalid Token");
+            (0, http_errors_1.default)(401, "Invalid Token");
         const decodedToken = jsonwebtoken_1.default.verify(token, config_1.config.tokens.jwt_token);
         console.log("ajmal decodedToken", decodedToken);
         socket.user = decodedToken;

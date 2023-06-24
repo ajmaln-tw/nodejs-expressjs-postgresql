@@ -18,7 +18,7 @@ export const getByIdValidator = (
     res: Response,
     next: NextFunction
 ): void => {
-    queryValidator(getByIdParamsSchema, req.query, next);
+    queryValidator(getByIdParamsSchema, req.params, next);
 };
 
 export const validateUserDetails = (

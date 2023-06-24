@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Products = void 0;
 const pg_1 = require("../instances/pg");
 const sequelize_1 = require("sequelize");
-exports.Products = pg_1.sequelize.define("Products", {
+exports.Products = pg_1.sequelize.define("OrderItems", {
     id: {
         primaryKey: true,
         autoIncrement: true,
@@ -30,6 +30,6 @@ exports.Products = pg_1.sequelize.define("Products", {
         type: sequelize_1.DataTypes.INTEGER
     }
 }, {
-    tableName: "Products",
+    tableName: "OrderItems",
     timestamps: false,
 });

@@ -16,6 +16,7 @@ exports.queryValidator = exports.validator = void 0;
 const http_errors_1 = __importDefault(require("http-errors"));
 const validator = (schemaName, body, next) => __awaiter(void 0, void 0, void 0, function* () {
     const value = yield schemaName.validate(body);
+    ;
     try {
         value.error
             ? next((0, http_errors_1.default)(422, value.error.details[0].message))

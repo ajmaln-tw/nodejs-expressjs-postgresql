@@ -10,7 +10,7 @@ export interface Products extends Model {
 }
 
 export const Products = sequelize.define<Products>(
-    "Products",
+    "OrderItems",
     {
         id: {
             primaryKey: true,
@@ -39,7 +39,7 @@ export const Products = sequelize.define<Products>(
         }
     },
     {
-        tableName: "Products",
+        tableName: "OrderItems",
         timestamps: false,
     }
 );

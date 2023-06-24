@@ -1,10 +1,11 @@
 
-import { User } from "../models/Users"
+import { User } from "../models/User"
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { config } from "../config/config";
 import _ from "lodash";
+import { Customer } from "../models/Customer";
 
 
 export const signIn = async (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ export const signIn = async (req: Request, res: Response) => {
         const id = user.id;
         const isPassword = await bcrypt.compare(password, user.password);
         if (!isPassword) return res.status(401).json({ messages: "Invalid Credential" });
-        const token = jwt.sign({ id, email }, config.tokens.jwt_token as string, { expiresIn: "1d" });
+        const token = jwt.sign({ id, email: user.email, name: user.name }, config.tokens.jwt_token as string, { expiresIn: "1d" });
         res.status(200).json({ token });
     } catch (error) {
         console.log("Error", error)
@@ -32,10 +33,10 @@ export const signUp = async (req: Request, res: Response) => {
     try {
         const isExists = await User.findOne({ where: { email } });
         if (isExists) return res.status(409).json({ message: "ALREADY_EXISTS" });
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 2);
         const result = await User.create({ ...profileDetails, password: hashedPassword });
         if (!result) return res.status(400).json({ message: "PROFILE_NOT" });
-        const token = jwt.sign({ userId: result.id, email }, config.tokens.jwt_token as string, { expiresIn: "1d" });
+        const token = jwt.sign({ id: result.id, email: result.email, name: result.name }, config.tokens.jwt_token as string, { expiresIn: "1d" });
         res.status(201).json({ token });
     } catch (error) {
         console.log("Error", error)

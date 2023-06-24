@@ -1,5 +1,7 @@
+import { TYPE_OF_USER } from "../config/constants";
 import { sequelize } from "../instances/pg";
 import { Model, DataTypes } from "sequelize";
+import { Customer } from "./Customer";
 
 export interface UserInstance extends Model {
     id: number;
@@ -7,6 +9,7 @@ export interface UserInstance extends Model {
     password: string;
     email: string;
     status: boolean;
+    typeofUser: string
 }
 
 export const User = sequelize.define<UserInstance>(
@@ -30,6 +33,13 @@ export const User = sequelize.define<UserInstance>(
             type: DataTypes.BOOLEAN,
             defaultValue: true,
         },
+        typeofUser: {
+            type: DataTypes.STRING,
+            defaultValue: "1100",
+            validate: {
+                isIn: [TYPE_OF_USER], // Validation check
+            },
+        }
     },
     {
         tableName: "Users",

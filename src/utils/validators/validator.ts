@@ -4,7 +4,7 @@ import { Schema } from "joi";
 
 
 export const validator = async (schemaName: any, body: any, next: NextFunction) => {
-    const value = await schemaName.validate(body);
+    const value = await schemaName.validate(body);;
     try {
         value.error
             ? next(createHttpError(422, value.error.details[0].message))
