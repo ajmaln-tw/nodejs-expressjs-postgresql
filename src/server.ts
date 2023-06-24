@@ -4,7 +4,7 @@ import apiResourceRoutes from './routes/apiResourceRoutes';
 import cors from 'cors';
 import logger from "morgan";
 import { config } from "./config/config";
-import { verifyToken } from './utils/middleWare';
+import { rateLimiterMiddleware, verifyToken } from './utils/middleWare';
 import compression from "compression";
 import responseTime from "response-time";
 import rateLimiter from "rate-limiter-flexible";
@@ -22,13 +22,13 @@ initializeSocket(socServer);
 server.use(helmet());
 server.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"] }));
 server.use(compression(config.compressionConfig));
-// server.use(rateLimiterMiddleware);
+server.use(rateLimiterMiddleware);
 server.use(responseTime())
 server.use(logger("dev"));
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json())
 
-// Health Check
+// Health Check 
 server.get("/api/no-auth/ping", (req: Request, res: Response) => res.json({ pong: true }));
 
 server.use("/api/no-auth", authApi);

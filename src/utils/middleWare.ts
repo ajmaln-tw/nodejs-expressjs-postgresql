@@ -57,22 +57,48 @@ const rateLimiter = new RateLimiterRedis({
 
 
 
+const rateLimiters: Record<string, { requests: number; lastRequestTime: number }> = {};
 
 export const rateLimiterMiddleware = (
     req: Request,
     res: Response,
     next: NextFunction
 ): void => {
-    rateLimiter
-        .consume(req.ip)
-        .then(() => {
-            next();
-        })
-        .catch(() => {
-            res.status(429).json({ message: "Too Many Requests" });
-        });
-};
+    const MAX_REQUESTS = 50; // Maximum allowed requests within the time window
+    const TIME_WINDOW = 60 * 1000; // Time window in milliseconds (e.g., 1 minute)
 
+    // Check if the IP address is stored in the request object, or use req.ip directly
+    const clientIp: any = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    // Create or retrieve the rate limiter data structure for each IP address
+    const rateLimiterData = rateLimiters[clientIp] || {
+        requests: 0,
+        lastRequestTime: Date.now()
+    };
+
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - rateLimiterData.lastRequestTime;
+
+    if (elapsedTime > TIME_WINDOW) {
+        // Reset the rate limiter if the time window has passed
+        rateLimiterData.requests = 1;
+        rateLimiterData.lastRequestTime = currentTime;
+    } else {
+        // Increment the request count if still within the time window
+        rateLimiterData.requests++;
+        rateLimiterData.lastRequestTime = currentTime;
+    }
+
+    rateLimiters[clientIp] = rateLimiterData;
+
+    if (rateLimiterData.requests <= MAX_REQUESTS) {
+        // If within the allowed request limit, proceed to the next middleware
+        next();
+    } else {
+        // If the request limit is exceeded, send a "Too Many Requests" response
+        res.status(429).json({ message: "Too Many Requests" });
+    };
+}
 
 export const verifyTokenSocket = (socket: any, next: NextFunction) => {
     const token = socket.handshake.auth?.token;
@@ -90,6 +116,7 @@ export const verifyTokenSocket = (socket: any, next: NextFunction) => {
     }
     next()
 }
+
 
 interface PaginationOptions {
     defaultPageSize?: number;
