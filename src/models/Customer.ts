@@ -6,7 +6,8 @@ import { Address } from "./Address";
 export interface Customers extends Model {
     id: number;
     userId: number,
-    addressId: number
+    addressId: number,
+    profileImage: string,
 }
 
 export const Customer = sequelize.define<Customers>(
@@ -24,6 +25,9 @@ export const Customer = sequelize.define<Customers>(
                 key: 'id'
             }
         },
+        profileImage: {
+            type: DataTypes.STRING,
+        }
     },
     {
         tableName: "Customers",

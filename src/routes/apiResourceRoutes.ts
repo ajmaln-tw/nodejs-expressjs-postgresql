@@ -4,11 +4,15 @@ import * as controller from "../controllers/Service";
 import * as profileController from "../controllers/Profile";
 import { getByIdValidator, paginationValidator, validateUserDetails } from "../utils/validators/UserValidator";
 import { validateCustomerDetails } from "../utils/validators/CustomerValidator";
+import { upload } from "../utils/handler/imageHandler";
 
 
 const router = Router();
 
 router.get("/profile", controller.getProfile);
+router.put("/profile-update/:id", controller.updateProfile);
+router.get("/profile-image", controller.getProfileImage);
+router.post("/upload-image", upload.single('file'), controller.uploadImage);
 
 router.put("/update-customerDetails", controller.createCustomer);
 router.patch("/update-customerDetails/:customerId", controller.updateCustomer);

@@ -12,6 +12,9 @@ import * as redis from 'redis';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 import { ClientCommandOptions } from "@redis/client/dist/lib/client";
 import createHttpError from "http-errors";
+import express from "express";
+import path from "path";
+import fs from 'fs';
 
 // TODO :- check JWT_SECRET
 // TODO :- bearer token
@@ -122,3 +125,29 @@ interface PaginationOptions {
     defaultPageSize?: number;
     maxPageSize?: number;
 }
+
+export const fileServer = express.static(path.join(__dirname, 'uploads'), { fallthrough: true });
+
+
+export const serveFile = (req: Request, res: Response) => {
+    console.log("here file server request")
+    const { filename } = req.params;
+    const uploadDirectory = path.join(__dirname, '../../uploads');
+    const filePath = path.join(uploadDirectory, filename);
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+        // Check file permissions
+        fs.access(filePath, fs.constants.R_OK, (err) => {
+            if (err) {
+                // File is not readable
+                res.status(403).json({ message: 'File access denied.' });
+            } else {
+                // Serve the file
+                res.sendFile(filePath);
+            }
+        });
+    } else {
+        // File not found
+        res.status(404).json({ message: 'File not found.' });
+    }
+};
